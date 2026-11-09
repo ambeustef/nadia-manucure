@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Luxury micro-scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 140, 140, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(180, 140, 140, 0.45);
+}
+
+
+/* Shine replayed on the nail lacquer after a UV cure */
+@keyframes nailCureShine {
+  0% { filter: brightness(1) saturate(1); }
+  35% { filter: brightness(1.35) saturate(1.15) drop-shadow(0 0 6px rgba(255, 255, 255, 0.8)); }
+  100% { filter: brightness(1) saturate(1); }
+}
+.nail-cure-shine {
+  animation: nailCureShine 1.4s ease-out 1;
+}

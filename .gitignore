@@ -1,0 +1,12 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Local tooling / AI Studio scratch media
+.aistudio/
+.claude/

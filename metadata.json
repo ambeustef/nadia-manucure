@@ -1,0 +1,6 @@
+{
+  "name": "Nadia – Haute Manucure & Nail Art",
+  "description": "Expérience interactive et luxueuse de Nail Art et simulateur de manucure réaliste.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
