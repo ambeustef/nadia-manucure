@@ -4,6 +4,7 @@ import { NailColor, NailFinish, NailShape } from '../types.ts';
 import { NAIL_SHADES, FINISH_OPTIONS, NAIL_SHAPES } from '../data/shades.ts';
 import { luxuryAudio } from '../utils/audio.ts';
 import { X, Sparkles, Sun, Check, ArrowLeft, Camera, RefreshCw } from 'lucide-react';
+import { NAIL_ARTS, NailArtDefs, NailArtLayer, NailArtId } from './NailArtDesigns.tsx';
 
 // Outline of the nail in aurelia_macro_nail (1024x1024), in the overlay's 0-100 viewBox
 const MACRO_NAIL_PATH = 'M68.8,18.4 C70.2,19 71.4,19.6 72.3,20.4 C73.2,21.6 73.6,22.8 73.7,24.2 C73.9,25.8 73.9,27.5 73.7,29.1 C73.6,31 73.4,32.8 73,34.6 C72.6,36.3 72.2,37.9 71.6,39.5 C71,41 70.3,42.4 69.5,43.7 C68.7,45.1 67.8,46.5 66.8,47.8 C65.7,49.3 64.5,50.7 63.3,52 C62.2,53.1 61.1,54.2 59.9,55.1 C58.7,55.8 57.5,56.2 56.3,56.4 C54.9,56.6 53.5,56.6 52.2,56.4 C50.5,56.1 48.9,55.7 47.4,55.1 C45.8,54.2 44.4,53.2 43.3,52 C42.3,50.7 41.6,49.3 41.1,47.8 C40.8,46.4 40.7,45 40.8,43.7 C40.9,42.5 41.3,41.3 41.8,40.1 C42.9,38.2 44.1,36.4 45.3,34.6 C46.6,32.9 48,31.3 49.4,29.8 C51,28.1 52.6,26.5 54.3,24.9 C55.9,23.7 57.5,22.5 59.2,21.5 C60.8,20.6 62.4,19.7 64,19 C65.6,18.5 67.2,18.2 68.8,18.4 Z';
@@ -28,6 +29,11 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
   const [selectedShape, setSelectedShape] = useState<NailShape>('almond');
   const [glossIntensity, setGlossIntensity] = useState<number>(85);
   const [compareMode, setCompareMode] = useState<boolean>(false);
+  const [nailArt, setNailArt] = useState<NailArtId>('none');
+  const [showInspiration, setShowInspiration] = useState<boolean>(false);
+
+  const activeArt = NAIL_ARTS.find((a) => a.id === nailArt) ?? NAIL_ARTS[0];
+  const hasArt = nailArt !== 'none';
 
   if (!isOpen) return null;
 
@@ -146,12 +152,16 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                       <filter id="macroCuticleBlur" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="2" />
                       </filter>
+                      <NailArtDefs />
                     </defs>
 
                     {/* Every lacquer layer is clipped to the real nail outline */}
                     <g clipPath="url(#macroNailClip)">
                     <g transform="rotate(33, 57, 37)">
-                      {/* Opaque 3D Salon Lacquer Layer */}
+                      {/* Signature Nadia nail art replaces the plain lacquer when selected */}
+                      {hasArt ? (
+                        <NailArtLayer design={nailArt} gloss={glossIntensity} />
+                      ) : (
                       <ellipse
                         cx="57"
                         cy="37"
@@ -163,6 +173,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                           transition: 'fill 300ms ease, opacity 300ms ease',
                         }}
                       />
+                      )}
 
                       {/* Cuticle base shadow */}
                       <ellipse
@@ -170,7 +181,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                         cy="58"
                         rx="16"
                         ry="6"
-                        fill={selectedColor.deepHex}
+                        fill={hasArt ? '#7A3B3B' : selectedColor.deepHex}
                         filter="url(#macroCuticleBlur)"
                         style={{
                           mixBlendMode: 'multiply',
@@ -193,7 +204,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                         />
                       )}
 
-                      {activeFinish === 'chrome' && (
+                      {!hasArt && activeFinish === 'chrome' && (
                         <ellipse
                           cx="57"
                           cy="36"
@@ -207,7 +218,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                         />
                       )}
 
-                      {activeFinish === 'glitter' && (
+                      {!hasArt && activeFinish === 'glitter' && (
                         <g style={{ mixBlendMode: 'screen' }}>
                           <circle cx="53" cy="30" r="1.4" fill="url(#goldSpecks)" />
                           <circle cx="61" cy="36" r="1.8" fill="url(#goldSpecks)" />
@@ -217,7 +228,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                         </g>
                       )}
 
-                      {activeFinish === 'french' && (
+                      {!hasArt && activeFinish === 'french' && (
                         <path
                           d="M 43 27 Q 57 21 71 27 Q 57 24 43 27"
                           fill="#FFFFFF"
@@ -225,7 +236,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                         />
                       )}
 
-                      {activeFinish === 'goldleaf' && (
+                      {!hasArt && activeFinish === 'goldleaf' && (
                         <g style={{ mixBlendMode: 'screen' }}>
                           <path
                             d="M 52 40 L 56 38 L 55 42 Z"
@@ -246,7 +257,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                     <path
                       d={MACRO_NAIL_PATH}
                       fill="none"
-                      stroke={selectedColor.deepHex}
+                      stroke={hasArt ? activeArt.rim : selectedColor.deepHex}
                       strokeWidth="0.25"
                       opacity="0.6"
                       filter="url(#macroFeather)"
@@ -263,10 +274,10 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                 {/* Live shade watermark */}
                 <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 text-right border border-[#EADBD5]">
                   <span className="block text-[8px] uppercase tracking-[0.2em] text-[#8C7974]">
-                    {selectedColor.number}
+                    {hasArt ? 'Signature Nadia' : selectedColor.number}
                   </span>
                   <span className="block text-xs font-serif font-medium text-[#2C2020]">
-                    {selectedColor.name}
+                    {hasArt ? activeArt.label : selectedColor.name}
                   </span>
                 </div>
               </div>
@@ -296,6 +307,73 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
             {/* Right 5 cols: Customization Studio Controls */}
             <div className="lg:col-span-5 p-6 flex flex-col justify-between gap-6 overflow-y-auto">
               <div className="space-y-6">
+                {/* Signature Nadia nail art, inspired by her own creations */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs uppercase tracking-[0.2em] font-medium text-[#463834] font-body flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#E5007A]" />
+                      Nail Art Signature Nadia
+                    </span>
+                    <button
+                      onClick={() => setShowInspiration((v) => !v)}
+                      className="text-[11px] text-[#9E3349] hover:text-[#5B1220] underline underline-offset-2 cursor-pointer"
+                    >
+                      {showInspiration ? 'Masquer ses créations' : 'Voir ses créations'}
+                    </button>
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {showInspiration && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden mb-3"
+                      >
+                        <img
+                          src="/images/nadia_creations.jpg"
+                          alt="Créations de Nadia : french fuchsia 3D, tigre orange et fuchsia, léopard rouge, swirl rouge, guépard et cœur fuchsia"
+                          className="w-full max-h-64 object-cover object-center border border-[#EADBD5]"
+                          loading="lazy"
+                        />
+                        <span className="block text-[10px] text-[#8C7A75] italic mt-1 font-serif">
+                          Les designs ci-dessous sont inspirés de ces poses réalisées par Nadia.
+                        </span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {NAIL_ARTS.map((art) => {
+                      const isSelected = nailArt === art.id;
+                      return (
+                        <button
+                          key={art.id}
+                          onClick={() => {
+                            luxuryAudio.playSoftClick();
+                            setNailArt(art.id);
+                          }}
+                          className={`p-2 text-left transition-all border cursor-pointer flex flex-col gap-1.5 ${
+                            isSelected
+                              ? 'bg-[#30161C] text-white border-[#30161C]'
+                              : 'bg-white text-[#5E4D48] border-[#E8DDD8] hover:bg-[#F5EAE6]'
+                          }`}
+                          aria-pressed={isSelected}
+                        >
+                          <span
+                            className="block w-full h-8 rounded-t-full border border-white/70 shadow-inner"
+                            style={{ background: art.id === 'none' ? selectedColor.hex : art.swatch }}
+                          />
+                          <span className="block text-[11px] font-medium leading-tight">{art.label}</span>
+                          <span className={`block text-[9px] leading-tight ${isSelected ? 'text-[#D0B2AA]' : 'text-[#96827D]'}`}>
+                            {art.sublabel}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* 1. Color Selector directly in Macro Mode (As requested!) */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -315,6 +393,7 @@ export const MacroStudioModal: React.FC<MacroStudioModalProps> = ({
                           key={shade.id}
                           onClick={() => {
                             luxuryAudio.playBottleSelect();
+                            setNailArt('none');
                             onSelectColor(shade);
                           }}
                           className={`relative aspect-square rounded-sm overflow-hidden border transition-all cursor-pointer ${
